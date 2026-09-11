@@ -154,3 +154,111 @@ def create_html_report(filename, summary, column_analyses):
         print(f"Report saved to '{filename}'")
     except Exception as e:
         print(f"Error saving report: {e}")
+
+
+def create_grouped_report(filename, group_column, numeric_column, grouped_data):
+    """
+    Generate an HTML report showing grouped data analysis.
+    
+    Args:
+        filename (str): Output HTML file
+        group_column (str): Column that was grouped by
+        numeric_column (str): Column that was analyzed
+        grouped_data (dict): Grouped data from group_by()
+    """
+    
+    html_content = f"""
+    <!DOCTYPE html>
+    <html>
+    <head>
+        <title>Grouped Analysis Report</title>
+        <style>
+            body {{
+                font-family: Arial, sans-serif;
+                margin: 20px;
+                background-color: #f5f5f5;
+            }}
+            .container {{
+                background-color: white;
+                padding: 20px;
+                border-radius: 8px;
+                max-width: 1000px;
+                margin: 0 auto;
+            }}
+            h1 {{
+                color: #333;
+                border-bottom: 2px solid #28a745;
+                padding-bottom: 10px;
+            }}
+            table {{
+                width: 100%;
+                border-collapse: collapse;
+                margin: 20px 0;
+            }}
+            th, td {{
+                padding: 12px;
+                text-align: left;
+                border-bottom: 1px solid #ddd;
+            }}
+            th {{
+                background-color: #28a745;
+                color: white;
+            }}
+            tr:hover {{
+                background-color: #f5f5f5;
+            }}
+        </style>
+    </head>
+    <body>
+        <div class="container">
+            <h1>📊 Grouped Analysis: {group_column}</h1>
+            <p>Analysis grouped by <strong>{group_column}</strong>, statistics for <strong>{numeric_column}</strong></p>
+            
+            <table>
+                <tr>
+                    <th>{group_column.capitalize()}</th>
+                    <th>Count</th>
+    """
+    
+    # Add numeric column headers if applicable
+    if numeric_column and 'total' in list(grouped_data.values())[0]:
+        html_content += f"""
+                    <th>Total {numeric_column}</th>
+                    <th>Average {numeric_column}</th>
+        """
+    
+    html_content += """
+                </tr>
+    """
+    
+    # Add rows for each group
+    for group_name, group_data in grouped_data.items():
+        html_content += f"""
+                <tr>
+                    <td><strong>{group_name}</strong></td>
+                    <td>{group_data['count']}</td>
+        """
+        
+        if 'total' in group_data:
+            html_content += f"""
+                    <td>{group_data['total']:.2f}</td>
+                    <td>{group_data['average']:.2f}</td>
+            """
+        
+        html_content += """
+                </tr>
+        """
+    
+    html_content += """
+            </table>
+        </div>
+    </body>
+    </html>
+    """
+    
+    try:
+        with open(filename, 'w') as f:
+            f.write(html_content)
+        print(f"Grouped report saved to '{filename}'")
+    except Exception as e:
+        print(f"Error saving report: {e}")

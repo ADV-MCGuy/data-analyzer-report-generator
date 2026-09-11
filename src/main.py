@@ -3,8 +3,8 @@ main.py - Entry point for data analyzer
 """
 
 import sys
-from analyzer import load_csv, get_summary, get_column_analysis
-from report_generator import create_html_report
+from analyzer import load_csv, get_summary, get_column_analysis, group_by
+from report_generator import create_html_report, create_grouped_report
 
 
 def main():
@@ -38,9 +38,18 @@ def main():
         if analysis:
             column_analyses.append(analysis)
             print(f"  ✓ Analyzed column: {header}")
-    
-    # Generate report
+
+    # Generate main report
     create_html_report(output_file, summary, column_analyses)
+    
+    # Group data by a specific column (example: 'department')
+    group_column = 'department'  # Change as needed
+    numeric_column = 'salary'  # Change as needed for numeric analysis
+    grouped_data = group_by(headers, rows, group_column, numeric_column)
+    
+    # Generate grouped report (no import needed here now)
+    grouped_output_file = output_file.replace('_report.html', '_grouped_report.html')
+    create_grouped_report(grouped_output_file, group_column, numeric_column, grouped_data)
     
     print("Done!")
 
